@@ -26,6 +26,13 @@ def login(request):
     return render(request, "accounts/login.html", {"form": form})
 
 
+@require_POST
+def logout(request):
+    if request.user.is_authenticated:
+        auth_logout(request)
+    return redirect("accounts:test")
+
+
 # @require_http_methods(["GET", "POST"])
 # def signup(request):
 #     if request.method == "POST":
