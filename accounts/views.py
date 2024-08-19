@@ -6,7 +6,7 @@ from django.contrib.auth import login as auth_login # 로그인
 from django.contrib.auth import logout as auth_logout # 로그아웃
 
 
-from .forms import UserForm
+from .forms import CustomUserCreationForm
 # Create your views here.
 
 
@@ -33,9 +33,14 @@ def logout(request):
     return redirect("accounts:test")
 
 
-# @require_http_methods(["GET", "POST"])
-# def signup(request):
-#     if request.method == "POST":
-#
-#     form = UserForm()
-#     return render(request, "accounts/signup.html", {"form": form})
+@require_http_methods(["GET", "POST"])
+def signup(request):
+    if request.method == "POST":
+        form = CustomUserCreationForm(request.POST)
+        if form.is_valid():
+            user = form.save()
+            auth_login(request, user)
+            return redirect("accounts:test")
+
+    form = CustomUserCreationForm()
+    return render(request, "accounts/signup.html", {"form": form})
