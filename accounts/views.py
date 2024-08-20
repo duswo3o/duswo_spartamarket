@@ -6,7 +6,7 @@ from django.contrib.auth import login as auth_login # 로그인
 from django.contrib.auth import logout as auth_logout # 로그아웃
 
 
-from .forms import CustomUserCreationForm
+from .forms import CustomUserCreationForm, CustomUserChangeForm
 # Create your views here.
 
 
@@ -44,3 +44,15 @@ def signup(request):
 
     form = CustomUserCreationForm()
     return render(request, "accounts/signup.html", {"form": form})
+
+
+@require_http_methods(["GET", "POST"])
+def update(request):
+    if request.method == "POST":
+        if request.user.is_authenticated:
+            form = CustomUserChangeForm(request.POST, instance=request.user)
+            form.save()
+            return redirect("accounts:test")
+
+    form = CustomUserChangeForm()
+    return render(request, "accounts/update.html", {"form":form})
