@@ -10,17 +10,13 @@ from .forms import CustomUserCreationForm, CustomUserChangeForm
 # Create your views here.
 
 
-def testhome(request):
-    return render(request, "accounts/testhome.html")
-
-
 @require_http_methods(["POST", "GET"])
 def login(request):
     if request.method == "POST":
         form = AuthenticationForm(data=request.POST)
         if form.is_valid():
             auth_login(request, form.get_user())
-            return redirect("accounts:test")
+            return redirect("products:index")
 
     form = AuthenticationForm()
     return render(request, "accounts/login.html", {"form": form})
@@ -30,7 +26,7 @@ def login(request):
 def logout(request):
     if request.user.is_authenticated:
         auth_logout(request)
-    return redirect("accounts:test")
+    return redirect("products:index")
 
 
 @require_http_methods(["GET", "POST"])
@@ -40,7 +36,7 @@ def signup(request):
         if form.is_valid():
             user = form.save()
             auth_login(request, user)
-            return redirect("accounts:test")
+            return redirect("products:index")
 
     form = CustomUserCreationForm()
     return render(request, "accounts/signup.html", {"form": form})
@@ -52,7 +48,15 @@ def update(request):
         if request.user.is_authenticated:
             form = CustomUserChangeForm(request.POST, instance=request.user)
             form.save()
-            return redirect("accounts:test")
+            return redirect("products:index")
 
     form = CustomUserChangeForm()
     return render(request, "accounts/update.html", {"form":form})
+
+
+@require_POST
+def delete(request):
+    if request.user.is_authenticated:
+        request.user.delete()
+        auth_logout(request)
+        return redirect("products:index")
