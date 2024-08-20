@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <h1>SpartaMarket</h1>
+
+    {% for post in posts %}
+        <ul>
+            <li><a href="{% url 'products:detail' post.pk %}">{{ post.title }}</a></li>
+        </ul>
+
+    {% endfor %}
+
+
+{% endblock content %}
