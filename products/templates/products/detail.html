@@ -6,5 +6,6 @@
     <hr>
     <p>{{ post.content }}</p>
     <hr>
+    <a href="{% url 'products:update' post.pk %}">게시글 수정하기</a>
     <a href="{% url "products:index" %}" > 목록으로 돌아가기 </a>
 {% endblock content%}

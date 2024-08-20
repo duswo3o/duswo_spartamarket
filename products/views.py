@@ -1,4 +1,5 @@
 from django.shortcuts import render, redirect
+from django.shortcuts import get_object_or_404
 
 from django.views.decorators.http import require_http_methods, require_POST
 # from django.contrib.auth import
@@ -36,5 +37,21 @@ def create(request):
 
 
 def detail(request, pk):
-    post = Post.objects.get(pk=pk)
+    post = get_object_or_404(Post, pk=pk)
     return render(request, "products/detail.html", {"post":post})
+
+
+@require_http_methods(["GET", "POST"])
+def update(request, pk):
+    post = get_object_or_404(Post, pk=pk)
+    if request.method == "POST":
+        form = PostForm(request.POST, instance=post)
+        if form.is_valid():
+            form.save()
+            return redirect("products:detail", pk)
+    else:
+        form = PostForm(instance=post)
+        context = {"form": form,
+                   "post": post
+                   }
+        return render(request, "products/update.html", context)
