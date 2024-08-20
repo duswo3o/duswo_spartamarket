@@ -17,3 +17,19 @@ def index(request):
         "posts": posts,
     }
     return render(request, "products/index.html", context)
+
+
+@require_http_methods(["GET", "POST"])
+def create(request):
+    if request.method == "GET":
+        if request.user.is_authenticated:
+            form = PostForm()
+            return render(request, "products/create.html", {"form": form})
+        else:
+            return redirect("accounts:login")
+
+    else:
+        form = PostForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect("products:index")
