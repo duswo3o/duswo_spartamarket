@@ -6,6 +6,14 @@
     <hr>
     <p>{{ post.content }}</p>
     <hr>
-    <a href="{% url 'products:update' post.pk %}">게시글 수정하기</a>
     <a href="{% url "products:index" %}" > 목록으로 돌아가기 </a>
+
+    {% if request.user.is_authenticated %}
+        <a href="{% url 'products:update' post.pk %}">게시글 수정하기</a>
+
+        <form action="{% url 'products:delete' post.pk %}" method="POST">
+        {% csrf_token %}
+            <input type="submit" value="삭제하기">
+        </form>
+    {% endif %}
 {% endblock content%}

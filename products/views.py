@@ -55,3 +55,11 @@ def update(request, pk):
                    "post": post
                    }
         return render(request, "products/update.html", context)
+
+
+@require_POST
+def delete(request, pk):
+    # if request.user.is_authenticated:
+    post = get_object_or_404(Post, pk=pk)
+    post.delete()
+    return redirect("products:index")
