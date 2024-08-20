@@ -33,3 +33,8 @@ def create(request):
         if form.is_valid():
             form.save()
             return redirect("products:index")
+
+
+def detail(request, pk):
+    post = Post.objects.get(pk=pk)
+    return render(request, "products/detail.html", {"post":post})

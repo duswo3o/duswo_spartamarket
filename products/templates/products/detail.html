@@ -1,0 +1,10 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <h1>{{ post.title }}</h1>
+    <p>created_time : {{ post.created_time }}</p>
+    <hr>
+    <p>{{ post.content }}</p>
+    <hr>
+    <a href="{% url "products:index" %}" > 목록으로 돌아가기 </a>
+{% endblock content%}
