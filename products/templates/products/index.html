@@ -1,7 +1,10 @@
 {% extends 'base.html' %}
+{% load static %}
 
 {% block content %}
     <h1>SpartaMarket</h1>
+
+    <img src="{% static 'products/duswo.png' %}" alt="duswo">
 
     {% for post in posts %}
         <ul>
