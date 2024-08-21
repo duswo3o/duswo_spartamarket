@@ -20,7 +20,26 @@
 
         <form action="{% url 'products:delete' post.pk %}" method="POST">
         {% csrf_token %}
-            <input type="submit" value="삭제하기">
+            <input type="submit" value="게시글삭제">
         </form>
+    {% endif %}
+
+    <form action="{% url 'products:comment' post.pk %}" method="POST">
+    {% csrf_token %}
+    {{ comment_form.as_p }}
+        <input type="submit" value="댓글작성">
+    </form>
+
+    <p>댓글 : {{ comments.count }}</p>
+    {% if comments %}
+        {% for comment in comments %}
+            <p>{{ comment.content }} | {{ comment.created_time }}</p>
+            <form action="{% url 'products:comment_delete' post.pk comment.pk%}" method="POST">
+            {% csrf_token %}
+                <input type="submit" value="댓글삭제">
+            </form>
+        {% endfor %}
+    {% else %}
+        <p>댓글이 없습니다</p>
     {% endif %}
 {% endblock content%}

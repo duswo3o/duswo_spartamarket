@@ -4,8 +4,8 @@ from django.shortcuts import get_object_or_404
 from django.views.decorators.http import require_http_methods, require_POST
 from django.contrib.auth.decorators import login_required
 
-from .models import Post
-from .forms import PostForm
+from .models import Post, Comment
+from .forms import PostForm, CommentForm
 # Create your views here.
 
 
@@ -31,13 +31,22 @@ def create(request):
         # files = request.FILES # 넘어온 파일
         form = PostForm(request.POST, request.FILES)
         if form.is_valid():
-            form.save()
-            return redirect("products:index")
+            post = form.save(commit=False)
+            post.save()
+            return redirect("products:detail", post.pk)
 
 
 def detail(request, pk):
     post = get_object_or_404(Post, pk=pk)
-    return render(request, "products/detail.html", {"post":post})
+    comment_form = CommentForm()
+    comments = post.comments.all().order_by("-created_time")
+
+    context = {
+        "post": post,
+        "comments": comments,
+        "comment_form": comment_form,
+    }
+    return render(request, "products/detail.html", context)
 
 
 @require_http_methods(["GET", "POST"])
@@ -51,7 +60,7 @@ def update(request, pk):
     else:
         form = PostForm(instance=post)
         context = {"form": form,
-                   "post": post
+                   "post": post,
                    }
         return render(request, "products/update.html", context)
 
@@ -62,3 +71,23 @@ def delete(request, pk):
     post = get_object_or_404(Post, pk=pk)
     post.delete()
     return redirect("products:index")
+
+
+@require_POST
+def comment(request, pk):
+    post = get_object_or_404(Post, pk=pk)
+    form = CommentForm(request.POST)
+    if form.is_valid():
+        comment = form.save(commit=False)
+        comment.post = post
+        comment.save()
+        return redirect("products:detail", pk)
+
+
+@login_required()
+@require_POST
+def comment_delete(request, post_pk, comment_pk):
+    post = get_object_or_404(Post, pk=post_pk)
+    comment = Comment.objects.get(post=post, pk=comment_pk)
+    comment.delete()
+    return redirect("products:detail", post_pk)
