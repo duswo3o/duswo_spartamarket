@@ -28,7 +28,8 @@ def create(request):
         return render(request, "products/create.html", {"form": form})
 
     else:
-        form = PostForm(request.POST)
+        # files = request.FILES # 넘어온 파일
+        form = PostForm(request.POST, request.FILES)
         if form.is_valid():
             form.save()
             return redirect("products:index")
