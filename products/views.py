@@ -32,6 +32,7 @@ def create(request):
         form = PostForm(request.POST, request.FILES)
         if form.is_valid():
             post = form.save(commit=False)
+            post.author = request.user
             post.save()
             return redirect("products:detail", post.pk)
 
@@ -69,10 +70,14 @@ def update(request, pk):
 def delete(request, pk):
     # if request.user.is_authenticated:
     post = get_object_or_404(Post, pk=pk)
-    post.delete()
+
+    if post.author == request.user:
+        post.delete()
     return redirect("products:index")
 
 
+
+@login_required()
 @require_POST
 def comment(request, pk):
     post = get_object_or_404(Post, pk=pk)
@@ -91,3 +96,8 @@ def comment_delete(request, post_pk, comment_pk):
     comment = Comment.objects.get(post=post, pk=comment_pk)
     comment.delete()
     return redirect("products:detail", post_pk)
+
+
+def like(request, pk):
+    post = get_object_or_404(Post, pk=pk)
+    

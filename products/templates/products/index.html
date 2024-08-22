@@ -6,12 +6,20 @@
 
     <img src="{% static 'products/duswo.png' %}" alt="duswo">
 
+    <div class="container">
     {% for post in posts %}
         <ul>
-            <li><a href="{% url 'products:detail' post.pk %}">{{ post.title }}</a></li>
+        <div>
+            <p><a href="{% url 'products:detail' post.pk %}">{{ post.title }}</a>
+                &nbsp; 작성자 : {{ post.author }}
+            </p>
+        </div>
         </ul>
 
     {% endfor %}
+
+    </div>
+
 
 
 {% endblock content %}
