@@ -2,7 +2,9 @@
 
 {% block content %}
     <h1>{{ post.title }}</h1>
-    <p>created_time : {{ post.created_time }}</p>
+    <div>
+    <p>created_time : {{ post.created_time }} || 작성자 : {{ post.author }}</p>
+    </div>
     <hr>
 
     {% if post.image %}
@@ -13,14 +15,39 @@
 
     <p>{{ post.content }}</p>
     <hr>
-    <a href="{% url "products:index" %}" > 목록으로 돌아가기 </a>
+    <a href="{% url "products:index" %}" > 목록으로 돌아가기 </a><br><br>
 
-    {% if request.user.is_authenticated %}
-        <a href="{% url 'products:update' post.pk %}">게시글 수정하기</a>
+    {% if request.user.id == post.author_id %}
+        {% if request.user.is_authenticated %}
+            <a href="{% url 'products:update' post.pk %}">게시글 수정하기</a><br>
 
-        <form action="{% url 'products:delete' post.pk %}" method="POST">
-        {% csrf_token %}
-            <input type="submit" value="삭제하기">
-        </form>
+            <form action="{% url 'products:delete' post.pk %}" method="POST">
+            {% csrf_token %}
+
+                <input type="submit" value="게시글삭제">
+            </form>
+        {% endif %}
+    {% endif %}
+
+    <form action="{% url 'products:comment' post.pk %}" method="POST">
+    {% csrf_token %}
+    {{ comment_form.as_p }}
+        <input type="submit" value="댓글작성">
+    </form>
+
+    <p>댓글 : {{ comments.count }}</p>
+    {% if comments %}
+        {% for comment in comments %}
+            <form action="{% url 'products:comment_delete' post.pk comment.pk%}" method="POST">
+            {% csrf_token %}
+                <p>{{ comment.content }} | {{ comment.created_time }} |
+                    {% if request.user.id == post.author_id %}
+                        <input type="submit" value="댓글삭제">
+                    {% endif %}
+                </p>
+            </form>
+        {% endfor %}
+    {% else %}
+        <p>댓글이 없습니다</p>
     {% endif %}
 {% endblock content%}
