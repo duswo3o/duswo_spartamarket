@@ -85,6 +85,9 @@ DATABASES = {
     }
 }
 
+# 장고의 Abstract를 그대로 사용하는 것이 아닌 상속을 받아 커스텀된 유저 모델을 사용할 것을 알려주는 것
+AUTH_USER_MODEL = 'accounts.User'
+
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
@@ -121,6 +124,13 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
 STATIC_URL = 'static/'
+STATICFILES_DIRS = [BASE_DIR/"static"]
+STATIC_ROOT = BASE_DIR/"staticfiles" # 배포시에 필요
+
+
+# Media files
+MEDIA_URL = "/media/"
+MEDIA_ROOT = BASE_DIR/"media"
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
